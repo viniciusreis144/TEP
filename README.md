@@ -45,7 +45,7 @@ Groq:
 Chat com Groq: Bate-papo usando IA da plataforma Groq.
 
 
-# Aula 2
+# Aula 03
 
 ## Finalização de Testes
 
@@ -157,44 +157,245 @@ services:
 
 ---
 
-# Aula 03
+# Aula 04
 
 # Engenharia de Prompt
 
 ## O que é Engenharia de Prompt
-Engenharia de Prompt é a área responsável pela criação e otimização de instruções textuais (prompts) para maximizar a eficiência e precisão dos modelos de linguagem (LLMs). Ela inclui formulação, testes e refinamento contínuo dos prompts, sempre prezando pela clareza, neutralidade e imparcialidade.
+A Engenharia de Prompt envolve a criação e otimização de instruções textuais, os chamados prompts, para orientar modelos de linguagem (LLMs). O foco é garantir que esses modelos compreendam e respondam de forma precisa às solicitações dos usuários.
 
 ## Configurações dos Modelos de Linguagem
-- **Temperatura**: controla o nível de aleatoriedade nas respostas (quanto menor, mais determinística).
-- **Tokens**: representa o número de caracteres processados.
-- **TopP**: deve ser mantido baixo para obter respostas mais exatas.
+- **Temperatura**: quanto menor, mais determinística é a resposta.
+- **Tokens**: representa unidades de processamento de texto.
+- **TopP**: controla o grau de precisão nas respostas.
 
 ## Tipos de Prompts
 ### Zero-shot Prompting
-Solicita-se uma resposta sem exemplos prévios, como no prompt direto "Explique os antibióticos".
+Solicita respostas sem fornecer exemplos prévios, como ao pedir explicações diretas: 
+```d
+Explique os antibióticos.
+```
 
 ### Few-shot Prompting
-Inclui exemplos para guiar a resposta do modelo. Por exemplo, listar sentenças com diferentes classificações de sentimento.
+Inclui exemplos para guiar as respostas, facilitando tarefas como classificar sentimentos em frases.
 
 ## Elementos de um Prompt
 - **Instrução**: o que o modelo deve fazer.
-- **Contexto**: informações adicionais.
-- **Entrada**: a pergunta ou dado fornecido.
-- **Indicador de saída**: o formato esperado da resposta.
+- **Contexto**: informações complementares.
+- **Entrada**: a pergunta ou informação dada ao modelo.
+- **Indicador de Saída**: formato esperado da resposta.
 
-## Dicas para Projetar Prompts
-1. **Comece simples**: a especificidade e concisão tendem a gerar melhores resultados.
-2. **Seja específico**: quanto mais detalhado o prompt, melhor a resposta.
-3. **Foque no que fazer**: evite dizer ao modelo o que não fazer.
+## Dicas para Criar Prompts
+1. **Seja simples e específico**: Instruções claras e diretas geram melhores resultados.
+2. **Seja detalhado**: Quanto mais informações fornecidas, melhor será a resposta do modelo.
+3. **Diga o que fazer**: Focar nas ações esperadas evita resultados imprecisos.
 
-## Principais Técnicas
-- **Zero-shot prompting**: o modelo responde sem exemplos prévios.
-- **Few-shot prompting**: inclui exemplos para guiar o modelo.
-- **Chain-of-Thought prompting**: exemplifica o passo a passo para que o modelo raciocine.
-- **Self-consistency**: usa múltiplas respostas e escolhe a mais frequente.
+## Exemplos de Aplicações
+### Resumo de Texto
+Criação de prompts para resumir um conteúdo:
+```d
+Explique o conceito de antibióticos.
+```
 
-## Aplicações Avançadas
-- **Geração de código**: LLMs podem gerar código em linguagens específicas sem muitos detalhes.
-- **Classificação de texto**: os prompts podem ser ajustados para rótulos específicos (neutro, positivo, negativo).
-- **Conversação**: LLMs podem ser configurados para dar respostas técnicas ou mais acessíveis, conforme as necessidades do público.
+### Classificação de Texto
+Criação de exemplos para classificar o sentimento de uma frase:
+```json
+Classifique o texto em neutro, negativo ou positivo.
+Texto: Acho que a comida estava ok.
+Sentimento:
+```
+
+### Geração de Código
+Prompts para gerar código de forma eficiente:
+```json
+/*
+Pergunte ao usuário seu nome e diga "Olá".
+*/
+```
+
+## Técnicas Avançadas
+### Zero-shot & Few-shot Prompting
+Zero-shot refere-se à habilidade de o modelo lidar com solicitações sem exemplos prévios, enquanto Few-shot utiliza alguns exemplos para guiar a resposta.
+
+### Chain-of-Thought Prompting
+Técnica para guiar o modelo a pensar em etapas ao resolver uma tarefa.
+
+## Exemplos de Prompts com Cadeia de Pensamento
+```json
+P: Um paciente chega com sintomas de febre. O médico realiza exames e diagnostica pneumonia. Explique os passos seguidos.
+R: O médico fez o exame físico, solicitou exames de sangue, analisou os resultados e diagnosticou pneumonia.
+```
+
+## Outras Técnicas
+- **Self-consistency**: Obtém múltiplas respostas e escolhe a mais comum.
+- **Chain-of-Verification**: Verifica a veracidade das respostas iniciais geradas pelo modelo.
+- **Geração com Recuperação Aprimorada (RAG)**: Usa recuperação de informações externas para melhorar as respostas.
+- **React - Razão e Ação**: Estrutura que combina raciocínio e ação intercaladamente.
+
+---
+
+# Aula 5
+
+## Agentes de IA com CrewAI e Llama3 usando a API Groq
+
+Nesta aula, exploramos como criar agentes de IA utilizando a biblioteca CrewAI, o modelo Llama3 e a API Groq em Python. A ideia é configurar e executar agentes de IA de forma prática.
+
+### Requisitos
+
+- Python 3.8 ou superior
+- Biblioteca CrewAI
+- Acesso à API Groq para o modelo Llama3
+- Pip para gerenciar pacotes Python
+
+### Instalação
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/viniciusds2020/ai_crewai_starter_template.git
+   cd ai_crewai_starter_template
+   ```
+
+2. Crie um ambiente virtual:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # No Windows, use `venv\Scriptsctivate`
+   ```
+
+3. Instale as dependências:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Configuração
+
+1. Obtenha uma chave de API da Groq e adicione no arquivo `.env`:
+   ```bash
+   GROQ_API_KEY=your_api_key_here
+   ```
+
+2. Verifique a configuração com o código a seguir:
+
+   ```python
+   import os
+   from dotenv import load_dotenv
+   load_dotenv()
+
+   groq_api_key = os.getenv('GROQ_API_KEY')
+   if groq_api_key is None:
+       print("A chave da API não foi carregada corretamente.")
+   else:
+       print("Chave da API carregada:", groq_api_key)
+   ```
+
+### Uso
+
+Execute o agente de IA com o comando:
+```bash
+python main.py
+```
+
+### Estrutura do Projeto
+
+```
+.
+├── README.md
+├── requirements.txt
+├── main.py
+└── .env
+```
+
+- `README.md`: Documentação.
+- `requirements.txt`: Dependências do Python.
+- `main.py`: Script principal para executar o agente.
+- `.env`: Chave de API da Groq.
+
+### Arquivo **agents.py**
+
+Código para criar um sistema multi-agente com o modelo Llama3:
+
+```python
+from crewai_tools import tool
+from crewai import Agent, Task, Crew
+from langchain_groq import ChatGroq
+from langchain_community.tools import DuckDuckGoSearchRun
+
+# Modelo LLM - Llama3 
+llm = ChatGroq(temperature=0.7, groq_api_key='sua-chave-api-groq', model_name='llama-3.1-8b-instant')
+
+# Ferramentas - Busca na internet com DuckDuckGo
+@tool('DuckDuckGoSearchRun')
+def search_tool(search_query: str):
+  return DuckDuckGoSearchRun().run(search_query)
+
+# Tópico de pesquisa
+topic = "Apple and AI in finance"
+
+# Agentes
+researcher = Agent(
+    role = "Senior Researcher",
+    goal = f"Explore trending technologies in {topic}.",
+    backstory = "You are an innovative researcher.",
+    tools = [search_tool],
+    llm = llm,
+)
+
+writer = Agent(
+    role = "Top Writer",
+    goal = f"Create engaging content about {topic}.",
+    backstory = "You are an expert blogger.",
+    tools = [search_tool],
+    llm = llm,
+)
+
+# Tarefas
+research_task = Task(
+    description = f"Investigate the latest AI trends in {topic}.",
+    tools = [search_tool],
+    agent = researcher,
+)
+
+write_task = Task(
+    description = f"Write an engaging article on {topic}.",
+    tools = [search_tool],
+    agent = writer,
+    output_file = "my-blog.md"
+)
+
+# Orquestrador
+crew = Crew(
+    agents=[researcher, writer],
+    tasks=[research_task, write_task]
+)
+
+result = crew.kickoff(inputs={"topic": topic})
+```
+
+### Adaptando para uma nova tarefa
+
+Podemos adaptar o projeto acima para pesquisar e redigir uma notícia sobre queimadas em Mato Grosso. O arquivo `main.py` pode ser copiado e adaptado para `agente.py`. Lembre-se de alterar o idioma para Português do Brasil e modificar os prompts de acordo.
+
+### Instalação do Langflow
+
+Instale o Langflow localmente com o comando:
+```bash
+python -m pip install langflow -U
+```
+
+Execute o Langflow com:
+```bash
+python -m langflow run
+```
+
+Acesse a instância local em `http://127.0.0.1:7860`.
+
+### Exemplos de Fluxos no Langflow
+
+- TEP - Chat com Memória
+- TEP - CrewAI
+- TEP - PDF RAG
+
+---
 
