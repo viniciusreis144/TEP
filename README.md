@@ -44,88 +44,77 @@ Groq:
 Áudio para Texto: Ferramenta que transcreve áudios para texto.
 Chat com Groq: Bate-papo usando IA da plataforma Groq.
 
-# Aula 02
 
-## Finalizar os Testes Práticos:
-- **Tools** como **Search Tools** e **GPTs**
+# Aula 2
+
+## Finalização de Testes
+
+- Ferramentas: Exemplos de **Search Tools** e **GPTs**
 - VPS, Docker, Domínio e DNS (Cloudflare)
+  1. VPS, domínios (Registrar domínio)
+  2. Criar conta na Cloudflare e registrar domínio
 
-### VPS e Domínios:
-1. VPS e domínios (Registrar domínio)
-2. Criar conta na Cloudflare e registrar domínio
-
-Credenciais:
-- username: tep
-- senha: tep123
+---
 
 ## Docker
 
-Docker é uma plataforma open source que empacota uma aplicação dentro de um container, permitindo que ela rode em qualquer máquina que tenha Docker instalado.
+Docker é uma plataforma open source que empacota uma aplicação dentro de um container, permitindo rodá-la em qualquer máquina com Docker instalado.
 
-### Por que usar WSL 2 + Docker para desenvolvimento?
+### Benefícios do uso do Docker no Windows (com WSL 2)
+- Facilita a configuração de ambientes Unix no Windows.
+- Integra-se bem com o WSL 2, sem a necessidade de licença PRO do Windows.
 
-Montar ambientes de desenvolvimento no Windows pode ser complexo, e o desempenho pode ser insatisfatório. O Docker simplifica essa configuração, proporcionando um ambiente Unix eficiente e unificado.
+### Modos de usar Docker no Windows
+1. **Docker Desktop com WSL2**
+   - Integração com WSL 2, permitindo rodar Docker dentro do Linux.
+   - Visual para administrar o Docker e rodar clusters Kubernetes localmente.
+   
+   **Desvantagens**: Alto consumo de memória, possível necessidade de reinicializações.
 
-### Modos de Usar Docker no Windows:
+2. **Docker Engine diretamente no WSL2**
+   - Mais leve e roda de forma nativa no ambiente Linux.
+   - **Desvantagens**: Precisa ser instalado em cada instância do WSL 2 separadamente.
 
-#### Docker Desktop com WSL2:
-- Roda em cima da **Virtual Machine Platform** e se integra ao WSL2.
-- Não requer licença PRO do Windows 10/11.
-- Vantagens: ferramenta visual, extensões, fácil cluster Kubernetes.
-- Desvantagens: consome mais memória e recursos.
+---
 
-#### Docker Engine (Nativo) no WSL2:
-- Docker puro no ambiente Linux.
-- Vantagens: consome menos memória.
-- Desvantagens: instalação necessária para cada instância do WSL 2.
+## Instalar Docker no WSL 2
 
-### Instalação Docker no WSL2:
+1. Atualize o WSL para a versão mais recente:
+```shell
+wsl --update
+```
 
-1. Atualizar o WSL:
-   ```bash
-   wsl --update
-
-2. Definir a versão 2 do WSL como padrão:
+2. Defina a versão 2 como padrão:
+```shell
 wsl --set-default-version 2
+```
 
-3. Instalar Ubuntu:
+3. Instale o Ubuntu:
+```shell
 wsl --install
+```
 
-4. Configurar limites de recursos no arquivo .wslconfig:
-[wsl2]
-memory=8GB
-processors=4
+4. Instale Docker no Ubuntu via `apt`:
+```bash
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
 
-### Instalando Docker no Ubuntu:
-
-1. Adicionar repositório do Docker:
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu stable" | sudo tee /etc/apt/sources.list.d/docker.list
-sudo apt-get update
-
-2. Instalar pacotes do Docker:
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-3. Verificar instalação:
+5. Verifique a instalação:
+```bash
 sudo docker run hello-world
+```
 
-### Como Containerizar uma Aplicação Node.js
-Pré-requisitos:
-Docker Desktop e Git instalados.
+---
 
-Passo 1: Obtenha a aplicação de exemplo
+## Containerizando Aplicação Node.js
+
+1. Clone o repositório de exemplo:
+```bash
 git clone https://github.com/docker/docker-nodejs-sample
-apt install nodejs
-apt install npm
+```
 
-Passo 2: Teste a aplicação localmente:
-npm install
-node src/index.js
-
-Passo 3: Containerização com Docker
-Crie o arquivo Dockerfile:
+2. Crie um `Dockerfile` para a aplicação:
+```bash
 FROM node:14
 WORKDIR /usr/src/app
 COPY package*.json ./
@@ -133,32 +122,79 @@ RUN npm install
 COPY . .
 EXPOSE 3000
 CMD ["node", "src/index.js"]
+```
 
-Crie o arquivo .dockerignore:
-node_modules
-npm-debug.log
-Dockerfile
-.dockerignore
-
-Construa a imagem Docker:
+3. Construa e execute a imagem Docker:
+```bash
 docker build -t meu-app-node .
-
-Execute o container:
 docker run -p 3000:3000 meu-app
+```
 
-Usando Docker Compose:
-docker compose version
+---
+
+## Docker Compose
+
+### Arquivo `docker-compose.yml`
+```d
 version: '3'
 services:
   app:
     build: .
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
     environment:
       - NODE_ENV=production
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysecretpassword
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
+```
 
-Execute o Docker Compose:
-docker compose up --build
-   
+---
+
+# Aula 03
+
+# Engenharia de Prompt
+
+## O que é Engenharia de Prompt
+Engenharia de Prompt é a área responsável pela criação e otimização de instruções textuais (prompts) para maximizar a eficiência e precisão dos modelos de linguagem (LLMs). Ela inclui formulação, testes e refinamento contínuo dos prompts, sempre prezando pela clareza, neutralidade e imparcialidade.
+
+## Configurações dos Modelos de Linguagem
+- **Temperatura**: controla o nível de aleatoriedade nas respostas (quanto menor, mais determinística).
+- **Tokens**: representa o número de caracteres processados.
+- **TopP**: deve ser mantido baixo para obter respostas mais exatas.
+
+## Tipos de Prompts
+### Zero-shot Prompting
+Solicita-se uma resposta sem exemplos prévios, como no prompt direto "Explique os antibióticos".
+
+### Few-shot Prompting
+Inclui exemplos para guiar a resposta do modelo. Por exemplo, listar sentenças com diferentes classificações de sentimento.
+
+## Elementos de um Prompt
+- **Instrução**: o que o modelo deve fazer.
+- **Contexto**: informações adicionais.
+- **Entrada**: a pergunta ou dado fornecido.
+- **Indicador de saída**: o formato esperado da resposta.
+
+## Dicas para Projetar Prompts
+1. **Comece simples**: a especificidade e concisão tendem a gerar melhores resultados.
+2. **Seja específico**: quanto mais detalhado o prompt, melhor a resposta.
+3. **Foque no que fazer**: evite dizer ao modelo o que não fazer.
+
+## Principais Técnicas
+- **Zero-shot prompting**: o modelo responde sem exemplos prévios.
+- **Few-shot prompting**: inclui exemplos para guiar o modelo.
+- **Chain-of-Thought prompting**: exemplifica o passo a passo para que o modelo raciocine.
+- **Self-consistency**: usa múltiplas respostas e escolhe a mais frequente.
+
+## Aplicações Avançadas
+- **Geração de código**: LLMs podem gerar código em linguagens específicas sem muitos detalhes.
+- **Classificação de texto**: os prompts podem ser ajustados para rótulos específicos (neutro, positivo, negativo).
+- **Conversação**: LLMs podem ser configurados para dar respostas técnicas ou mais acessíveis, conforme as necessidades do público.
+
