@@ -391,11 +391,88 @@ python -m langflow run
 
 Acesse a instância local em `http://127.0.0.1:7860`.
 
-### Exemplos de Fluxos no Langflow
-
-- TEP - Chat com Memória
-- TEP - CrewAI
-- TEP - PDF RAG
-
 ---
+
+
+# Aula 06
+
+## Instalação do Dify
+
+### Clonando o repositório
+
+```bash
+git clone https://github.com/langgenius/dify.git
+cd dify/docker
+```
+
+### Criando uma cópia do arquivo ENV e alterando a porta do NGINX
+
+```bash
+cp .env.example .env
+# Senha para inicialização do usuário admin.
+# Se não definida, não será solicitada senha ao criar a conta admin inicial.
+INIT_PASSWORD=sk-9f73s3ljTX
+EXPOSE_NGINX_PORT=8080
+```
+
+### Executando o Docker Compose
+
+```bash
+docker compose up -d
+```
+
+### Atualizando o sistema
+
+Se precisar atualizar:
+
+```bash
+cd dify/docker
+docker compose down
+git pull origin main
+docker compose pull
+docker compose up -d
+```
+
+## Introdução ao Dify
+
+O Dify é uma plataforma projetada para a criação e gerenciamento de chatbots com base em uma estrutura de conhecimento. Ele permite que empresas criem interfaces de chatbot mais inteligentes e eficazes, utilizando uma base de dados robusta.
+
+## Instalação do N8n
+
+O N8n é uma ferramenta de automação de workflows que pode ser integrada ao Dify para criar fluxos de trabalho automatizados. Aqui estão os passos para sua instalação:
+
+### Criando uma pasta para o N8n
+
+```bash
+mkdir n8n
+cd n8n/
+```
+
+### Criando o arquivo `docker-compose.yaml`
+
+```bash
+version: "3.2"
+services:
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=8H4a10032024
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - n8n-net
+
+volumes:
+  n8n_data:
+
+networks:
+  n8n-net:
+    name: n8n-net
+    driver: bridge
+```
+
+Com isso, o N8n estará pronto para ser executado e integrado aos fluxos de trabalho do Dify.
 
