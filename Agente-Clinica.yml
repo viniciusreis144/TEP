@@ -39,25 +39,27 @@ model_config:
     - enabled: true
       isDeleted: false
       notAuthor: false
-      provider_id: 5a70b3d8-0e83-41ec-a982-ae972355d539
+      provider_id: ceea89a3-736f-4724-a25d-bed6b72fa59c
       provider_name: PegarSlots_cal.com
       provider_type: workflow
       tool_label: PegarSlots_cal.com
-      tool_name: pegar_slots_cal_com
+      tool_name: pegar_slots_cal
       tool_parameters:
         dataFim: ''
         dataInicio: ''
     - enabled: true
-      provider_id: fef8abb1-d8f2-428e-8002-77434aaf09cd
+      isDeleted: false
+      notAuthor: false
+      provider_id: a7d2bb48-58e8-42a8-9985-c0df2167d816
       provider_name: Fazer Agendamento Cal.com
       provider_type: workflow
       tool_label: Fazer Agendamento Cal.com
       tool_name: criar_agendamento_cal_com
       tool_parameters:
-        Telefone: ''
         dataslot: ''
         email: ''
         nome: ''
+        telefone: ''
   annotation_reply:
     enabled: false
   chat_prompt_config: {}
@@ -78,15 +80,10 @@ model_config:
       - local_file
   model:
     completion_params:
-      frequency_penalty: 0.5
-      presence_penalty: 0.5
-      response_format: text
       stop: []
-      temperature: 0.2
-      top_p: 0.75
     mode: chat
-    name: gpt-4o-mini
-    provider: openai
+    name: gemini-1.5-flash-latest
+    provider: google
   more_like_this:
     enabled: false
   opening_statement: ''
@@ -109,8 +106,8 @@ model_config:
     Utilize como padrão o fuso horário GMT -4, descontando e atualizando a hora fornecida\
     \ pela ferramenta current_time, que está em GMT 0.  Não dê informações sobre o\
     \ fuso, apenas informe horas. Considere o formato de 24h. Se o usuário disser\
-    \ 8, ele refere-se a 8 AM.\n\nA ferramenta pegar_slots_cal_com retorna o horário\
-    \ também em GMT 0. Dessa forma, ao criar um agendamento acrescente +4h para corrigir\
+    \ 8, ele refere-se a 8 AM.\n\nA ferramenta pegar_slots_cal retorna o horário também\
+    \ em GMT 0. Dessa forma, ao criar um agendamento acrescente +4h para corrigir\
     \ o fuso horário.\n</Hour>\n\n<weekday>\nUtilize o GMT -4 para informar o dia\
     \ da semana, considerando que a ferramenta current_time está em GMT 0. Faça os\
     \ cálculos de horas a menos para informar o dia correto.\n</weekday>\n \n<CommunicationStyle>\n\
@@ -122,10 +119,9 @@ model_config:
     \ Seja cordial, mas não pule etapas.\n3. Pergunte para que dia deseja agendar\
     \ a consulta.\n4. Faça poucas perguntas para identificar os dados junto ao cliente\n\
     5. Sugira uma data com base na lista de slots vagos. Os slots vagos para agendamento\
-    \ podem ser consultados utilizando a ferramenta criar_agendamento_cal_com\n6.\
-    \ Assim que o usuário escolher o horário, faça o agendamento utilizando a ferramenta\
-    \ Fazer Agendamento Cal.com\n7.Ao confirmar o agendamento, diga que esta tudo\
-    \ ok.\n</etapas> \n</Agent>"
+    \ podem ser consultados utilizando a ferramenta pegar_slots_cal.\n6. Assim que\
+    \ o usuário escolher o horário, faça o agendamento utilizando a ferramenta criar_agendamento_cal_com.\
+    \ \n7.Ao confirmar o agendamento, diga que esta tudo ok.\n</etapas> \n</Agent>"
   prompt_type: simple
   retriever_resource:
     enabled: true
