@@ -621,6 +621,177 @@ Exemplos de Data e Hora
 
 2024-10-14T10:00:00.000Z
 
+# Aula 9
 
+## Implementação de Chatbot/Agent no Dify
+### Uso de ferramentas para acessar a API do Cal.com
+
+```xml
+<Agent>
+  <contexto>
+  Na Clínica Médica Saúde Total, oferecemos serviços completos de fisioterapia voltados à recuperação e ao bem-estar dos nossos pacientes. O Dr. Benevid Felix da Silva, especialista na área, está à disposição para proporcionar tratamentos personalizados, incluindo:
+
+Reabilitação Muscular e Articular: Tratamentos para alívio de dores e recuperação de movimentos em lesões, pós-operatórios e condições crônicas.
+Terapias Preventivas: Fisioterapia preventiva para fortalecer músculos, melhorar a postura e evitar futuras lesões.
+Tratamento de Condições Neuromusculares: Reabilitação focada em pacientes com doenças neurológicas, como AVC, esclerose múltipla e Parkinson.
+Fisioterapia Ortopédica: Cuidados especializados para recuperação de fraturas, torções e problemas ortopédicos.
+Nosso objetivo é melhorar a qualidade de vida dos pacientes por meio de tratamentos eficazes e personalizados.
+  </contexto>
+  
+  <Description>
+    O agente virtual da Clínica Médica Saúde Total é projetado para ajudar pacientes com agendamentos de consultas, fornecimento de informações sobre serviços médicos, esclarecimento de dúvidas e gerenciamento de registros de pacientes.
+  </Description>
+
+  <Language>pt-BR</Language>
+
+<Hour>
+Utilize como padrão o fuso horário GMT -4, descontando e atualizando a hora fornecida pela ferramenta current_time, que está em GMT 0. Não dê informações sobre o fuso, apenas informe horas.
+</Hour>
+
+<weekday>
+Utilize o GMT -4 para informar o dia da semana, considerando que a ferramenta current_time está em GMT 0. Faça os cálculos de horas a menos para informar o dia correto.
+</weekday>
+ 
+<CommunicationStyle>
+  <Tone>Calmo e acolhedor</Tone>
+  <Formality>Formal</Formality>
+</CommunicationStyle>
+    
+<etapas>
+1. Solicite o nome da pessoa, email e telefone. Esses dados são necessários para fazer o agendamento da consulta.
+2. Pergunte para que dia deseja agendar a consulta.
+3. Faça poucas perguntas para identificar os dados junto ao cliente
+4. Sugira uma data com base na lista de slots vagos. Os slots vagos para agendamento podem ser consultados utilizando a ferramenta get_slots_cal_com.
+5. Assim que o usuário escolher o horário, faça o agendamento utilizando a ferramenta criar_agendamento_cal_com. Confirme o agendamento com a ferramenta get_bookings_cal_com.
+6.Ao confirmar o agendamento
+</etapas> 
+</Agent>
+```
+
+# Aula 10
+
+## Instalação do N8n
+
+### APIS do WhatsApp
+#### go-whatsapp-web-multidevice
+
+- Send WhatsApp message via http API
+- [docs/openapi.yml](https://github.com/aldinokemal/go-whatsapp-web-multidevice/blob/main/docs/openapi.yaml) for more details
+- Compress image before send
+- Compress video before send
+
+#### Arquivo: docker-compose.yaml
+
+```bash
+version: '3.9'
+services:
+  whatsapp_go:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    image: "aldinokemal2104/go-whatsapp-web-multidevice:latest"
+    build:
+      context: .
+      dockerfile: ./docker/golang.Dockerfile
+    restart: 'always'
+    ports:
+      - "3100:3000"
+    environment:
+      - WEBHOOK="https://n8n.semcodigo.edu.pl/webhook-test/consultavendas"
+    volumes:
+      - whatsapp_data:/app/storages
+
+volumes:
+  whatsapp_data:
+```
+Comando adicional
+```bash
+sudo docker run --detach --publish=3001:3000 --name=whatsapp2 --restart=always --volume=$(sudo docker volume create --name=whatsapp2):/app/storages aldinokemal2104/go-whatsapp-web-multidevice --autoreply="Don't reply this message please" --webhook="http://localhost:5678/webhook-test/whats"
+```
+Evolution API v2
+A Evolution API v2 pode ser facilmente implantada com Docker no modo standalone ou swarm.
+
+Processo de Instalação:
+https://doc.evolution-api.com/v2/pt/install/docker
+
+Instalação do Postgres
+Para configurar o PostgreSQL via Docker:
+```bash
+version: '3.3'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    networks:
+      - evolution-net
+    command: ["postgres", "-c", "max_connections=1000"]
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=PASSWORD
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    networks:
+      - evolution-net
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=EMAIL
+      - PGADMIN_DEFAULT_PASSWORD=PASSWORD  
+    ports:
+      - 4000:80
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  evolution-net:
+    driver: bridge
+```
+Configuração e comando para criar o banco de dados
+```bash
+docker-compose up -d
+docker exec -it postgres psql -U postgres -c "CREATE DATABASE evolution;"
+```
+Variáveis de ambiente para o .env
+```bash
+DATABASE_ENABLED=true
+DATABASE_PROVIDER=postgresql
+DATABASE_CONNECTION_URI='postgresql://user:pass@localhost:5432/evolution?schema=public'
+CACHE_REDIS_ENABLED=true
+CACHE_REDIS_URI=redis://localhost:6379/6
+```
+Instalação da Evolution
+```bash
+version: '3.9'
+services:
+  evolution-api:
+    container_name: evolution_api
+    image: atendai/evolution-api:v2.1.1
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - evolution_instances:/evolution/instances
+
+volumes:
+  evolution_instances:
+```
+docker compose up -d
+docker logs evolution_api
+```bash
+docker compose up -d
+docker logs evolution_api
+```
+Exemplo de JSON de slots
+```json
+{ "slots": { "2024-10-28": [ { "time": "2024-10-28T12:00:00.000Z" }, { "time": "2024-10-28T13:00:00.000Z" }, { "time": "2024-10-28T14:00:00.000Z" } ] }}
+```
 
 
